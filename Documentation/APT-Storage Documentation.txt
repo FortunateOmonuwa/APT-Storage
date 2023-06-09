@@ -1,0 +1,136 @@
+APT-Storage is a file storage system which allow users to manage, upload, retrieve,and delete their files...
+
+The storage system used in this project is a local file system located in the project and an SQL Database to save the meta data of the files. With Entity FrameWork as the ORM.
+
+In the nearest future, there'll be an integration with 3rd party cloud storage providers such as Azure or AWS..
+
+
+
+Project Models...
+{Below are the models/entities in this project.}
+
+public class File
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [MaxLength(20)]
+        [DisplayName("Enter File Name")]
+        public string FileName { get; set; }
+
+        [Range(0, 2L * 1024 * 1024 * 1024, ErrorMessage = "file size too large")]
+        public long FileSize { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime UploadDate { get; set; } = DateTime.Now;
+
+        [ForeignKey(nameof(User))]
+        public int OwnerId { get; set; }
+    }
+
+
+public class Folder
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [MaxLength(20)]
+        [DisplayName("Enter Folder Name")]
+        public string Name { get; set; }
+
+        [ForeignKey(nameof(User))]
+        public int OwnerId { get; set; }
+
+        //public int? ParentFolderId { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [DataType(DataType.DateTime)]
+        public DateTime? UpdatedAt { get; set; }
+
+        public ICollection<Folder>? Subfolders { get; set; }
+        public ICollection<File>? Files { get; set; }
+    }
+
+
+ public class User
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        [MaxLength(20)]
+        [DisplayName("Enter a Username")]
+        public string Username { get; set; }
+
+        [Required]
+        [MaxLength(20)]
+        [DisplayName("FirstName")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [MaxLength(20)]
+        [DisplayName("LastName")]
+        public string LastName { get; set; }
+
+        [EmailAddress]
+        [DisplayName("Email Address")]
+        public string Email { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [DataType(DataType.DateTime)]
+        public DateTime? ModifiedAt { get; set; }
+
+        public ICollection<File> Files { get; set; }
+    }
+
+
+Contracts/Interfaces
+The contracts/interfaces for this project are as follows:
+
+IFileRepository
+{
+     Task<File> UploadFileAsync(File file);//Uploads the file using the file entity and the userId
+
+     Task<File> GetByIdAsync(int fileId); //Retrieves a file by it's Id
+
+     Task<IQueryable<File>> GetAllFIlesAsync(); //Get's all files associated with the user
+
+     Task<IQueryable<File>> GetAllFIlesBySizeAsync(long fileSize); //Get's all files based on a size range
+
+     Task<IQueryable<File>> GetAllFIlesOrderedByDateAsync(DateOnly date); //Get's all files based on the date uploaded/ added
+
+
+     Task<IQueryable<File>> GetAllFIlesByFolderIdAsync(int folderId); //Retrieves all files in a specific folder associated with a user.
+
+     Task<File> UpdateFileAsync(File file); //Updates the meta-data of a file
+
+     Task DeleteFileAsync(int fileId); // Deletes file by Id
+
+     Task
+}
+
+
+IUserRepository
+{
+     Task<User> CreateUserAsync(User user); //Creates a new user
+
+     Task<User> GetUserById (int userId); //Get's a user by Id
+
+     Task<ICollection<User>> GetAllUsers ();
+
+     Task<ICollection<User>> GetAllUsersOrderedByDateCreated (DateOnly date);
+
+     Task<User> UpdateUserAsync(User user);
+
+     Task DeleteUserAsync(int userId);
+     
+}
+
