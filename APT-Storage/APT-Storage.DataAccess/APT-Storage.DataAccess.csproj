@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\Implementation\" />
+    <ProjectReference Include="..\APT-Storage.Domain\APT-Storage.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
