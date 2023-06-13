@@ -36,6 +36,6 @@ namespace APT_Storage.Domain.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        public ICollection<File> Files { get; set; }
+        public ICollection<FileModel> Files { get; set; }
     }
 }

@@ -28,6 +28,6 @@ namespace APT_Storage.Domain.Models
         public DateTime? UpdatedAt { get; set; }
 
         public ICollection<Folder>? Subfolders { get; set; }
-        public ICollection<File>? Files { get; set; }
+        public ICollection<FileModel>? Files { get; set; }
     }
 }

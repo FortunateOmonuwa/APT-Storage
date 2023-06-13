@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace APT_Storage.Domain.Models
 {
-    public class File
+    public class FileModel
     {
         [Key]
         public int Id { get; set; }
