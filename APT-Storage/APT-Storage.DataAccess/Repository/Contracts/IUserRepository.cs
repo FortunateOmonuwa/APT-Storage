@@ -1,4 +1,5 @@
-﻿using System;
+﻿using APT_Storage.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,16 @@ namespace APT_Storage.DataAccess.Repository.Contracts
 {
     public interface IUserRepository
     {
+        Task<User> CreateUserAsync(User user); //Creates a new user
+
+        Task<User> GetUserById(int userId); //Get's a user by Id
+
+        Task<ICollection<User>> GetAllUsers();
+
+        Task<ICollection<User>> GetAllUsersOrderedByDateCreated(DateOnly date);
+
+        Task<User> UpdateUserAsync(User user);
+
+        Task DeleteUserAsync(int userId);
     }
 }
