@@ -1,5 +1,7 @@
-﻿using APT_Storage.DataAccess.Repository.Contracts;
+﻿using APT_Storage.DataAccess.Data_Context;
+using APT_Storage.DataAccess.Repository.Contracts;
 using APT_Storage.Domain.Models;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,34 +12,56 @@ namespace APT_Storage.DataAccess.Repository.Implementation
 {
     public class UserRepository : IUserRepository
     {
-        public Task<User> CreateUserAsync(User user)
+        private readonly DataContext _context;
+
+        public UserRepository(DataContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        public async Task<User> CreateUserAsync(User user)
+        {
+            var newUser = await _context.AddAsync(new User());
+            if(newUser != null)
+            {
+                return newUser.Entity;
+            }
+            return null;
         }
 
-        public Task DeleteUserAsync(int userId)
+        public async Task<User> DeleteUserAsync(int userId)
         {
-            throw new NotImplementedException();
+            //var userToDelete = _context.Users.Find(userId);
+            var userToDelete = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
+            if(userToDelete != null)
+            {
+                _context.Users.Remove(userToDelete);
+                _context.SaveChanges();
+            }
+            return null;
         }
 
-        public Task<ICollection<User>> GetAllUsers()
+        public async Task<ICollection<User>> GetAllUsers()
         {
-            throw new NotImplementedException();
+             return _context.Users.ToList();
         }
 
-        public Task<ICollection<User>> GetAllUsersOrderedByDateCreated(DateOnly date)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<ICollection<User>> GetAllUsersOrderedByDateCreated(DateOnly date)
+        //{
+        //    _context.Users.OrderBy(user => user.DateCreated).Tolist();
+        //}
 
         public Task<User> GetUserById(int userId)
         {
-            throw new NotImplementedException();
+
+            var userById = _context.Users.FirstOrDefault(x => x.Id == userId);
+            return Task.FromResult(userById);
         }
 
         public Task<User> UpdateUserAsync(User user)
         {
-            throw new NotImplementedException();
+            _context.Users.Update(user);
+            _context.SaveChangesAsync();
+            return Task.FromResult(user);
         }
     }
 }
