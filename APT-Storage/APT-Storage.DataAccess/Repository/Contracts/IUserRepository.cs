@@ -15,10 +15,10 @@ namespace APT_Storage.DataAccess.Repository.Contracts
 
         Task<ICollection<User>> GetAllUsers();
 
-        //Task<ICollection<User>> GetAllUsersOrderedByDateCreated(DateOnly date);
+        Task<ICollection<User>> GetAllUsersOrderedByDateCreated();
 
-        Task<User> UpdateUserAsync(User user);
+        Task<User> UpdateUserAsync(User user, int userId);
 
-        Task<User> DeleteUserAsync(int userId);
+        Task<bool> DeleteUserAsync(int userId);
     }
 }

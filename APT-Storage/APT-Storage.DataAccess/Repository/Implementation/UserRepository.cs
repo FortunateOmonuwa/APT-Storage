@@ -1,9 +1,11 @@
 ﻿using APT_Storage.DataAccess.Data_Context;
 using APT_Storage.DataAccess.Repository.Contracts;
 using APT_Storage.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,48 +22,109 @@ namespace APT_Storage.DataAccess.Repository.Implementation
         }
         public async Task<User> CreateUserAsync(User user)
         {
-            var newUser = await _context.AddAsync(new User());
-            if(newUser != null)
+
+            try
             {
-                return newUser.Entity;
+                if (user != null)
+                {
+                    await _context.Users.AddAsync(user);
+                    await _context.SaveChangesAsync();
+                    return user;
+                }
+                else
+                {
+                    throw new ArgumentException("The User fields cannot be empty.", nameof(user));
+                }
             }
-            return null;
-        }
 
-        public async Task<User> DeleteUserAsync(int userId)
-        {
-            //var userToDelete = _context.Users.Find(userId);
-            var userToDelete = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
-            if(userToDelete != null)
+            catch (DbUpdateException ex)
             {
-                _context.Users.Remove(userToDelete);
-                _context.SaveChanges();
+                throw new DbUpdateException("An error occurred while adding the new user.", ex);
             }
-            return null;
         }
 
-        public async Task<ICollection<User>> GetAllUsers()
+        public async Task<bool> DeleteUserAsync(int userId)
         {
-             return _context.Users.ToList();
+            try
+            {
+                var userToDelete = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+                if (userToDelete != null)
+                {
+                    _context.Users.Remove(userToDelete);
+                    _context.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    throw new Exception($"User with id {userId} doesn't exist");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while deleting this user.", ex);
+            }
+
         }
 
-        //public Task<ICollection<User>> GetAllUsersOrderedByDateCreated(DateOnly date)
-        //{
-        //    _context.Users.OrderBy(user => user.DateCreated).Tolist();
-        //}
+        public async Task<ICollection<User>> GetAllUsers() => await _context.Users.ToListAsync();
 
-        public Task<User> GetUserById(int userId)
+        public async Task<ICollection<User>> GetAllUsersOrderedByDateCreated()
         {
-
-            var userById = _context.Users.FirstOrDefault(x => x.Id == userId);
-            return Task.FromResult(userById);
+            try
+            {
+                var users = await _context.Users.OrderBy(d => d.CreatedAt).ToListAsync();
+                return users;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching the list of users.", ex);
+            }
         }
 
-        public Task<User> UpdateUserAsync(User user)
+
+        public async Task<User> GetUserById(int userId)
         {
-            _context.Users.Update(user);
-            _context.SaveChangesAsync();
-            return Task.FromResult(user);
+            try
+            {
+                var userById = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+                if(userById != null)
+                {
+                    return userById;
+                }
+                else
+                {
+                    throw new Exception ($"User with id {userId} doesn't exist");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching this user.", ex);
+            }
+        }
+
+        public async Task<User> UpdateUserAsync(User user, int userId)
+        {
+            try
+            {
+                var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                if (userCheck != null)
+                {
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                    return userCheck;
+                }
+                else
+                {
+                   throw new Exception($"User with id {userId} doesn't exist");
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException("An error occurred while updating the user details.", ex);
+            }
+
         }
     }
 }
