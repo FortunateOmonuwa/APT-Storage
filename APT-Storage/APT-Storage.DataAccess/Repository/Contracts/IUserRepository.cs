@@ -9,15 +9,15 @@ namespace APT_Storage.DataAccess.Repository.Contracts
 {
     public interface IUserRepository
     {
-        Task<User> CreateUserAsync(User user); //Creates a new user
+        Task<User> CreateUserAsync(User user); 
 
-        Task<User> GetUserById(int userId); //Get's a user by Id
+        Task<User> GetUserById(int userId); 
 
         Task<ICollection<User>> GetAllUsers();
 
-        Task<ICollection<User>> GetAllUsersOrderedByDateCreated();
+        //Task<ICollection<User>> GetAllUsersOrderedByDateCreated();
 
-        Task<User> UpdateUserAsync(User user, int userId);
+        Task<User> UpdateUserAsync(User user);
 
         Task<bool> DeleteUserAsync(int userId);
     }

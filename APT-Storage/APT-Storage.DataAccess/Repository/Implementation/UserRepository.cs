@@ -69,18 +69,31 @@ namespace APT_Storage.DataAccess.Repository.Implementation
 
         public async Task<ICollection<User>> GetAllUsers() => await _context.Users.ToListAsync();
 
-        public async Task<ICollection<User>> GetAllUsersOrderedByDateCreated()
-        {
-            try
-            {
-                var users = await _context.Users.OrderBy(d => d.CreatedAt).ToListAsync();
-                return users;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while fetching the list of users.", ex);
-            }
-        }
+        //public async Task<ICollection<User>> GetAllUsersOrderedByDateCreated()
+        //{
+        //    try
+        //    {
+        //        var users = await _context.Users.OrderBy(d => d.CreatedAt).ToListAsync();
+        //        return users;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("An error occurred while fetching the list of users.", ex);
+        //    }
+        //}
+
+        //public async Task<ICollection<User>> GetAllUsersInDescendingOrderByDateCreated()
+        //{
+        //    try
+        //    {
+        //        var users = await _context.Users.OrderByDescending(d => d.CreatedAt).ToListAsync();
+        //        return users;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("An error occurred while fetching the list of users.", ex);
+        //    }
+        //}
 
 
         public async Task<User> GetUserById(int userId)
@@ -104,11 +117,11 @@ namespace APT_Storage.DataAccess.Repository.Implementation
             }
         }
 
-        public async Task<User> UpdateUserAsync(User user, int userId)
+        public async Task<User> UpdateUserAsync(User user)
         {
             try
             {
-                var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                var userCheck = await _context.Users.FindAsync(user.Id);
                 if (userCheck != null)
                 {
                     _context.Users.Update(user);
@@ -117,7 +130,7 @@ namespace APT_Storage.DataAccess.Repository.Implementation
                 }
                 else
                 {
-                   throw new Exception($"User with id {userId} doesn't exist");
+                   throw new Exception($"User doesn't exist");
                 }
             }
             catch (DbUpdateException ex)
