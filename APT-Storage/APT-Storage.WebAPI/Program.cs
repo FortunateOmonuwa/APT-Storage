@@ -8,7 +8,7 @@ using Serilog.Formatting.Compact;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
-    .MinimumLevel.Override("Mivrosoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .Enrich.WithThreadId()
     .Enrich.WithProcessId()
     .Enrich.WithEnvironmentName()

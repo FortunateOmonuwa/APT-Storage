@@ -124,7 +124,7 @@ namespace APT_Storage.DataAccess.Repository.Implementation
                 var userCheck = await _context.Users.FindAsync(user.Id);
                 if (userCheck != null)
                 {
-                    _context.Users.Update(user);
+                    _context.Users.Update(user); 
                     await _context.SaveChangesAsync();
                     return userCheck;
                 }
@@ -136,7 +136,7 @@ namespace APT_Storage.DataAccess.Repository.Implementation
             catch (DbUpdateException ex)
             {
                 throw new DbUpdateException("An error occurred while updating the user details.", ex);
-            }
+            } 
 
         }
     }
