@@ -41,5 +41,6 @@ namespace APT_Storage.Domain.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public ICollection<FileModel>? Files { get; set; }
+        public ICollection<Folder>? Folders { get; set; }
     }
 }

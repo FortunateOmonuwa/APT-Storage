@@ -3,6 +3,8 @@ using APT_Storage.DataAccess.Repository.Contracts;
 using APT_Storage.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
+using StorageBucket;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -15,10 +17,14 @@ namespace APT_Storage.DataAccess.Repository.Implementation
     public class UserRepository : IUserRepository
     {
         private readonly DataContext _context;
+        private readonly storage _storageFolderPath;
+        private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(DataContext context)
+        public UserRepository(DataContext context, storage storageFolderPath, ILogger<UserRepository> logger)
         {
             _context = context;
+            _storageFolderPath = storageFolderPath;
+            _logger = logger;
         }
         public async Task<User> CreateUserAsync(User user)
         {
@@ -27,10 +33,45 @@ namespace APT_Storage.DataAccess.Repository.Implementation
             {
                 if (user != null)
                 {
-                    await _context.Users.AddAsync(user);
-                    await _context.SaveChangesAsync();
-                    return user;
+                    var checkEmail = await _context.Users.AnyAsync(e => e.Email == user.Email);
+                    var checkUsername = await _context.Users.AnyAsync(u => u.Username == user.Username);
+                    if (checkEmail == true)
+                    {
+                        _logger.LogError($"User couldn't be created because email {user.Email} already exists in the database");
+                        throw new Exception($"User with email {user.Email} already exists");
+                    }
+                    else if (checkUsername == true)
+                    {
+                        _logger.LogError($"User couldn't be created because username {user.Username} already exists in the database");
+                        throw new Exception($"User with username {user.Username} already exists");
+                    }
+                    else
+                    {
+                        await _context.Users.AddAsync(user);
+
+                        await _context.SaveChangesAsync();
+
+                        string folderName = user.Username;
+                        string folderPath = Path.Combine(_storageFolderPath.StorageFolderPath, folderName);
+                        Directory.CreateDirectory(folderPath);
+
+                        Folder newFolder = new()
+                        {
+                            Name = folderName,
+                            FolderPath = folderPath,
+                            OwnerId = user.Id
+                        };
+
+                        _context.Folders.Add(newFolder);
+
+                        await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
+
+                        return user;
+                    }
+                  
                 }
+                
                 else
                 {
                     throw new ArgumentException("The User fields cannot be empty.", nameof(user));
@@ -116,6 +157,7 @@ namespace APT_Storage.DataAccess.Repository.Implementation
                 throw new Exception("An error occurred while fetching this user.", ex);
             }
         }
+
 
         public async Task<User> UpdateUserAsync(User user)
         {

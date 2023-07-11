@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\APT-Storage.Domain\APT-Storage.Domain.csproj" />
+    <ProjectReference Include="..\StorageBucket\StorageBucket.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@ namespace APT_Storage.DataAccess.Repository.Contracts
     {
         Task<User> CreateUserAsync(User user); 
 
-        Task<User> GetUserById(int userId); 
+        Task<User> GetUserById(int userId);
 
         Task<ICollection<User>> GetAllUsers();
 

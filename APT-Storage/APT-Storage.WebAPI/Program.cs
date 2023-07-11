@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using StorageBucket;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -34,6 +35,7 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(conne
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<storage>();
 
 var app = builder.Build();
 

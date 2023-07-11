@@ -27,40 +27,37 @@ namespace APT_Storage.WebAPI.Controllers
         {
             try
             {
-                if(newUser == null)
+                
+                if (newUser == null)
                 {
                     _logger.LogError("Error creating new user because newUser parameters are empty");
-                    return StatusCode(StatusCodes.Status406NotAcceptable);
+                    return BadRequest("Invalid request. Fields are empty.");
                 }
   
                 else
                 {
-                    var mapUserDTO = _mapper.Map<User>(newUser);
-                    if(mapUserDTO.Username == null) 
-                    {
-                        _logger.LogError("Error creating new user because user already exists");
-                        return StatusCode(StatusCodes.Status406NotAcceptable, $"user with username {mapUserDTO.Username}already exists");
-                       
-                    }
-                    else if(mapUserDTO.Email != null)
-                    {
-                        _logger.LogError("Error creating new user because user already exists");
-                        return StatusCode(StatusCodes.Status406NotAcceptable, $"user with Email {mapUserDTO.Email}already exists");
-                    }
-                    else
-                    {
-                        await _user.CreateUserAsync(mapUserDTO);
 
+                    var mapUserDTO = _mapper.Map<User>(newUser);
+      
+                    var createUser = await _user.CreateUserAsync(mapUserDTO);
+                    if (createUser != null) 
+                    {
                         var user = _mapper.Map<UserGetDTO>(mapUserDTO);
                         _logger.LogInformation($"New user with details: Username - {user.Username}, FirstName - {user.FirstName}, LastName - {user.LastName}, Email - {user.Email}, was successfully created on {user.CreatedAt}");
                         return Ok(user);
                     }
-                  
+                    else
+                    {
+                        _logger.LogError("User already exists");
+                        return BadRequest("User already exists");
+                    }
+   
+
                 }
             }
             catch(Exception ex) 
             {
-                _logger.LogError("Error with server or code");
+                _logger.LogError("Error has occured");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
         }
