@@ -2,17 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <RootNamespace>APT_Storage.Service</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="File-Service\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\APT-Storage.Domain\APT-Storage.Domain.csproj" />
+    <Folder Include="Bucket\" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\APT-Storage",
+    "\\APT-Storage\\APT-Storage.DataAccess\\Repository",
+    "\\APT-Storage\\APT-Storage.DataAccess\\Repository\\Contracts",
+    "\\APT-Storage\\APT-Storage.Domain\\Models"
+  ],
+  "SelectedNode": "\\APT-Storage\\APT-Storage.WebAPI",
+  "PreviewInSolutionExplorer": false
+}
